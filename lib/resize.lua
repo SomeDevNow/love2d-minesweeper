@@ -1,11 +1,19 @@
 local resize = {}
 
 function resize:new(gw, gh) 
-    self.gw = gw
-    self.gh = gh
-    self.ox = 0
-    self.oy = 0
-    self.s = 1
+    local instance = {
+        gw = gw,
+        gh = gh,
+        nw = gw,
+        nh = gh,
+        ox = 0,
+        oy = 0,
+        s = 1,
+        wr = 1,
+        hr = 1,
+    }
+    setmetatable(instance, {__index = resize})
+    return instance
 end
 
 function resize:resize(nw, nh)
@@ -23,7 +31,7 @@ function resize:resize(nw, nh)
         self.ox = (self.nw - self.gw * self.s) / 2
         self.oy = 0
     else --perfect match
-        self.s = self.wr
+        self.s = self.nw / self.gw
         self.ox = 0
         self.oy = 0
     end
@@ -33,6 +41,9 @@ function resize:draw_start()
     love.graphics.push()
     love.graphics.translate(self.ox, self.oy)
     love.graphics.scale(self.s, self.s)
+end
+
+function resize:draw_end() 
     love.graphics.setColor(0, 0, 0, 1)
     if self.wr < self.hr then --letterbox
         love.graphics.rectangle("fill", 0, -self.oy/self.s, self.gw, self.oy/self.s)
@@ -42,9 +53,6 @@ function resize:draw_start()
         love.graphics.rectangle("fill", self.gw, 0, self.ox/self.s, self.gh)
     end
     love.graphics.setColor(1,1,1,1)
-end
-
-function resize:draw_end() 
     love.graphics.pop()
 end
 
