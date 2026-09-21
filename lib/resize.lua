@@ -1,4 +1,5 @@
 local resize = {}
+resize.__index = resize
 
 function resize:new(gw, gh) 
     local instance = {
@@ -12,7 +13,7 @@ function resize:new(gw, gh)
         wr = 1,
         hr = 1,
     }
-    setmetatable(instance, {__index = resize})
+    setmetatable(instance, resize)
     return instance
 end
 
