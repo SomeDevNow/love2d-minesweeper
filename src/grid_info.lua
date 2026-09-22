@@ -41,29 +41,18 @@ function data.init()
         for y = 1, 16 do
             if data.grid[x][y] ~= 9 then
                 local bombs_nearby = 0
-                local grids_around
-                if x>1 and x<16 and y>1 and y<16 then
-                    grids_around = {data.grid[x-1][y-1], data.grid[x][y-1], data.grid[x+1][y-1], data.grid[x-1][y+1], data.grid[x][y+1], data.grid[x+1][y+1], data.grid[x+1][y], data.grid[x-1][y]}
-                elseif x==1 and y>1 and y<16 then
-                    grids_around = {data.grid[x][y-1], data.grid[x+1][y-1], data.grid[x][y+1], data.grid[x+1][y+1], data.grid[x+1][y]}
-                elseif x==16 and y>1 and y<16 then
-                    grids_around = {data.grid[x-1][y-1], data.grid[x][y-1], data.grid[x-1][y+1], data.grid[x][y+1], data.grid[x-1][y]}
-                elseif x>1 and x<16 and y==1 then
-                    grids_around = {data.grid[x-1][y+1], data.grid[x][y+1], data.grid[x+1][y+1], data.grid[x+1][y], data.grid[x-1][y]}
-                elseif x>1 and x<16 and y==16 then
-                    grids_around = {data.grid[x-1][y-1], data.grid[x][y-1], data.grid[x+1][y-1], data.grid[x+1][y], data.grid[x-1][y]}
-                elseif x==1 and y==1 then
-                    grids_around = {data.grid[x][y+1], data.grid[x+1][y+1], data.grid[x+1][y]}
-                elseif x==1 and y==16 then
-                    grids_around = {data.grid[x][y-1], data.grid[x+1][y-1], data.grid[x+1][y]}
-                elseif x==16 and y==1 then
-                    grids_around = {data.grid[x-1][y+1], data.grid[x][y+1], data.grid[x-1][y]}
-                elseif x==16 and y==16 then
-                    grids_around = {data.grid[x-1][y-1], data.grid[x][y-1], data.grid[x-1][y]}
-                end
-                for _, grid in pairs(grids_around) do
-                    if grid == 9 then
-                        bombs_nearby = bombs_nearby + 1
+
+                for rx = -1, 1 do
+                    for ry = -1, 1 do
+                        if not (rx == 0 and ry == 0) then
+                            local cx = x-rx
+                            local cy = y-ry
+                            if cy >= 1 and cy <= 16 and cx >= 1 and cx <= 16 then
+                                if data.grid[cx][cy] == 9 then
+                                    bombs_nearby = bombs_nearby + 1
+                                end
+                            end
+                        end
                     end
                 end
                 data.grid[x][y] = bombs_nearby
