@@ -57,4 +57,8 @@ function resize:draw_end()
     love.graphics.pop()
 end
 
+function resize:get_scale() return self.s end
+function resize:get_offset_x() return self.ox end
+function resize:get_offset_y() return self.oy end
+
 return resize
