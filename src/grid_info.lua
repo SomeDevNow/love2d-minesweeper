@@ -4,8 +4,13 @@ data.grid = {}
 data.bomb_pos = {}
 data.grid_revealed = {}
 data.grid_flagged = {}
+data.game_over = false
 
 function data.init_grids()
+    data.grid = {}
+    data.grid_revealed = {}
+    data.grid_flagged = {}
+
     for i = 1, 16 do
         table.insert(data.grid, {})
         for j = 1, 16 do
@@ -26,9 +31,13 @@ function data.init_grids()
             table.insert(data.grid_flagged[i], false)
         end
     end
+
+    data.bomb_pos = {}
 end
 
 function data.init(grid_pos_x, grid_pos_y)
+    data.game_over = false
+
     new_bomb_pos(grid_pos_x, grid_pos_y)
 
     for _, pos in pairs(data.bomb_pos) do
@@ -65,9 +74,11 @@ function data.update(grid_x, grid_y)
         data.clear_blanks(grid_x, grid_y)
     elseif data.grid[grid_x][grid_y] ~= 9 then
         data.grid_revealed[grid_x][grid_y] = true
+    elseif data.grid[grid_x][grid_y] == 9 then
+        data.game_over = true
     end
 
-    return data.grid_revealed
+    return data.grid_revealed, data.game_over
 end
 
 function data.clear_blanks(grid_x, grid_y)
@@ -110,8 +121,10 @@ function data.clear_blanks(grid_x, grid_y)
     return data.grid_revealed
 end
 
-function data.flag_grid(grid_x, grid_y)
-    data.grid_flagged[grid_x][grid_y] = true
+function data.change_flag_state(grid_x, grid_y)
+    if not data.grid_revealed[grid_x][grid_y] or data.grid_flagged[grid_x][grid_y] then
+        data.grid_flagged[grid_x][grid_y] = (data.grid_flagged[grid_x][grid_y] and {false} or {true})[1]
+    end
     return data.grid_flagged
 end
 

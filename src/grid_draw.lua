@@ -20,25 +20,37 @@ function grid_draw:new(grid_info, spritesheet)
     return self
 end
 
-function grid_draw:update()
+function grid_draw:start()
     self.grid_init = true
+end
+
+function grid_draw:restart()
+    self.grid_init = false
 end
 
 function grid_draw:draw()
     if not self.grid_init then
         for x = 1, 16 do
             for y = 1, 16 do
-                love.graphics.draw(self.spritesheet, self.quads[1], love.math.newTransform(32+(x-1)*16, 32+(y-1)*16))
+                if self.grid_info.grid_flagged[x][y] then
+                    love.graphics.draw(self.spritesheet, self.quads[14],love.math.newTransform(32+(x-1)*16, 32+(y-1)*16))
+                else
+                    love.graphics.draw(self.spritesheet, self.quads[1], love.math.newTransform(32+(x-1)*16, 32+(y-1)*16))
+                end
             end
         end
     elseif self.grid_init then
         for x = 1, 16 do
             for y = 1, 16 do
                 if self.grid_info.grid_flagged[x][y] then
-                    love.graphics.draw(self.spritesheet, self.quads[12],love.math.newTransform(32+(x-1)*16, 32+(y-1)*16))
+                    love.graphics.draw(self.spritesheet, self.quads[14],love.math.newTransform(32+(x-1)*16, 32+(y-1)*16))
                 elseif self.grid_info.grid_revealed[x][y] then
                     local tile = self.grid_info.grid[x][y]
-                    love.graphics.draw(self.spritesheet, self.quads[tile+2],love.math.newTransform(32+(x-1)*16, 32+(y-1)*16))
+                    if tile == 9 then
+                        love.graphics.draw(self.spritesheet, self.quads[13],love.math.newTransform(32+(x-1)*16, 32+(y-1)*16))
+                    else
+                        love.graphics.draw(self.spritesheet, self.quads[tile+2],love.math.newTransform(32+(x-1)*16, 32+(y-1)*16))
+                    end
                 else
                     love.graphics.draw(self.spritesheet, self.quads[1], love.math.newTransform(32+(x-1)*16, 32+(y-1)*16))
                 end
