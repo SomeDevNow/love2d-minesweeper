@@ -4,7 +4,7 @@ data.grid = {}
 data.bomb_pos = {}
 data.grid_revealed = {}
 data.grid_flagged = {}
-data.game_over = false
+data.restart_game = false
 
 function data.init_grids()
     data.grid = {}
@@ -36,7 +36,12 @@ function data.init_grids()
 end
 
 function data.init(grid_pos_x, grid_pos_y)
-    data.game_over = false
+    data.grid = {}
+    data.grid_revealed = {}
+    data.grid_flagged = {}
+
+    data.init_grids()
+    data.restart_game = false
 
     new_bomb_pos(grid_pos_x, grid_pos_y)
 
@@ -144,6 +149,22 @@ function new_bomb_pos(grid_pos_x, grid_pos_y)
         seen[key] = true
 
         table.insert(data.bomb_pos, {x, y})
+    end
+end
+
+function data.check_for_win()
+    local grids_revealed = 0
+    for _, grid in pairs(data.grid_revealed) do
+        for _, tile in pairs(grid) do
+            if tile then
+                grids_revealed = grids_revealed + 1
+            end
+        end
+    end
+    if grids_revealed >= 216 then
+        return true
+    else
+        return false
     end
 end
 
