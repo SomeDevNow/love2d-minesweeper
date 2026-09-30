@@ -1,3 +1,4 @@
+
 local resize = require "lib.resize"
 local grid_info = require "src.grid_info"
 local grid_draw = require "src.grid_draw"
@@ -5,6 +6,7 @@ local minesweper_spritesheet
 local game_start = false
 local restart_game_win = false
 local restart_game_lose = false
+local font
 local WINDOW_WIDTH = 320
 local WINDOW_HEIGHT = 320
 local TO_RGB = 1/255
@@ -16,6 +18,8 @@ function love.load()
     love.graphics.setDefaultFilter("nearest", "nearest")
 
     minesweper_spritesheet = love.graphics.newImage("assets/spritesheet.png")
+
+    font = love.graphics.newFont("assets/monogram.ttf", 32)
 
     grid_info.init_grids()
     draw_grid = grid_draw:new(grid_info, love.graphics.newImage("assets/spritesheet.png"))
@@ -39,14 +43,18 @@ end
 function love.draw()
     if scale then scale:draw_start() end
 
+    love.graphics.setFont(font)
+
     love.graphics.setColor(176*TO_RGB, 176*TO_RGB, 184*TO_RGB)
     love.graphics.rectangle("fill", 0, 0, 320, 320)
     love.graphics.setColor(0,0,0)
     love.graphics.rectangle("fill", 28, 28, 264, 264)
     love.graphics.setColor(1, 1, 1)
 
+    draw_grid:draw()
+
     if not restart_game_lose and not restart_game_win then
-        draw_grid:draw()
+        grid_info.draw()
     end
 
     if restart_game_win or restart_game_lose then

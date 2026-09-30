@@ -4,6 +4,7 @@ data.grid = {}
 data.bomb_pos = {}
 data.grid_revealed = {}
 data.grid_flagged = {}
+data.mines_left = 40
 data.restart_game = false
 
 function data.init_grids()
@@ -74,6 +75,25 @@ function data.init(grid_pos_x, grid_pos_y)
     return data.grid
 end
 
+function new_bomb_pos(grid_pos_x, grid_pos_y)
+    data.bomb_pos = {}
+    local seen = {}
+
+    for i = 1, 40 do
+        local x, y
+        local key
+
+        repeat
+            x = love.math.random(1, 16)
+            y = love.math.random(1, 16)
+            key = x .. "," .. y
+        until not seen[key] and math.abs(x-grid_pos_x) > 2 or math.abs(y-grid_pos_y) > 2
+        seen[key] = true
+
+        table.insert(data.bomb_pos, {x, y})
+    end
+end
+
 function data.update(grid_x, grid_y)
     if data.grid[grid_x][grid_y] == 0 then
         data.clear_blanks(grid_x, grid_y)
@@ -133,25 +153,6 @@ function data.change_flag_state(grid_x, grid_y)
     return data.grid_flagged
 end
 
-function new_bomb_pos(grid_pos_x, grid_pos_y)
-    data.bomb_pos = {}
-    local seen = {}
-
-    for i = 1, 40 do
-        local x, y
-        local key
-
-        repeat
-            x = love.math.random(1, 16)
-            y = love.math.random(1, 16)
-            key = x .. "," .. y
-        until not seen[key] and math.abs(x-grid_pos_x) > 2 or math.abs(y-grid_pos_y) > 2
-        seen[key] = true
-
-        table.insert(data.bomb_pos, {x, y})
-    end
-end
-
 function data.check_for_win()
     local grids_revealed = 0
     for _, grid in pairs(data.grid_revealed) do
@@ -165,6 +166,25 @@ function data.check_for_win()
         return true
     else
         return false
+    end
+end
+
+function data.draw()
+    data.get_mines_left()
+
+    love.graphics.setColor(0,0,0)
+    love.graphics.print(data.mines_left, 144, 0)
+    love.graphics.setColor(1,1,1)
+end
+
+function data.get_mines_left()
+    data.mines_left = 40
+    for _, flag_row in pairs(data.grid_flagged) do
+        for _, flag in pairs(flag_row) do
+            if flag == true then
+                data.mines_left = data.mines_left - 1
+            end
+        end
     end
 end
 
