@@ -186,6 +186,9 @@ function data.get_mines_left()
             end
         end
     end
+    if data.mines_left < 0 then
+        data.mines_left = 0
+    end
 end
 
 return data
