@@ -10,7 +10,7 @@ love_files = [
 
 love_version = "11.5"
 
-icon_file = "assets/logo.png"
+icon_file = "assets/art/logo.png"
 
 [lovejs]
 title = "Minesweeper"

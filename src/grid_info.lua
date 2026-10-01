@@ -6,6 +6,7 @@ data.grid_revealed = {}
 data.grid_flagged = {}
 data.mines_left = 40
 data.restart_game = false
+data.win_audio_played = false
 
 function data.init_grids()
     data.grid = {}
@@ -87,30 +88,36 @@ function new_bomb_pos(grid_pos_x, grid_pos_y)
             x = love.math.random(1, 16)
             y = love.math.random(1, 16)
             key = x .. "," .. y
-        until not seen[key] and math.abs(x-grid_pos_x) > 2 or math.abs(y-grid_pos_y) > 2
+        until not seen[key] and (math.abs(x-grid_pos_x) > 2 or math.abs(y-grid_pos_y) > 2)
         seen[key] = true
 
         table.insert(data.bomb_pos, {x, y})
     end
 end
 
-function data.update(grid_x, grid_y)
+function data.update(grid_x, grid_y, dig_area_audio, dig_audio, lose_audio)
     if data.grid[grid_x][grid_y] == 0 then
-        data.clear_blanks(grid_x, grid_y)
+        data.clear_blanks(grid_x, grid_y, dig_area_audio)
     elseif data.grid[grid_x][grid_y] ~= 9 then
+        love.audio.stop()
+        love.audio.play(dig_audio)
         data.grid_revealed[grid_x][grid_y] = true
     elseif data.grid[grid_x][grid_y] == 9 then
         data.game_over = true
+        love.audio.stop()
+        love.audio.play(lose_audio)
     end
 
     return data.grid_revealed, data.game_over
 end
 
-function data.clear_blanks(grid_x, grid_y)
+function data.clear_blanks(grid_x, grid_y, dig_area_audio)    
     local available_grid = false
     local check_grids = {{grid_x, grid_y}}
     local current_grid_checking = check_grids[1]
     
+    love.audio.play(dig_area_audio)
+
     repeat
         available_grid = false
         for i=1, #check_grids do
@@ -146,23 +153,30 @@ function data.clear_blanks(grid_x, grid_y)
     return data.grid_revealed
 end
 
-function data.change_flag_state(grid_x, grid_y)
+function data.change_flag_state(grid_x, grid_y, flag_audio)
     if not data.grid_revealed[grid_x][grid_y] or data.grid_flagged[grid_x][grid_y] then
         data.grid_flagged[grid_x][grid_y] = (data.grid_flagged[grid_x][grid_y] and {false} or {true})[1]
+        love.audio.stop()
+        love.audio.play(flag_audio)
     end
+
     return data.grid_flagged
 end
 
-function data.check_for_win()
+function data.check_for_win(win_audio)
     local grids_revealed = 0
-    for _, grid in pairs(data.grid_revealed) do
-        for _, tile in pairs(grid) do
-            if tile then
+    for _, row in pairs(data.grid_revealed) do
+        for _, tile in pairs(row) do
+            if tile == true then
                 grids_revealed = grids_revealed + 1
             end
         end
     end
     if grids_revealed >= 216 then
+        if not data.win_audio_played then
+            love.audio.play(win_audio)
+            data.win_audio_played = true
+        end
         return true
     else
         return false
