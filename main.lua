@@ -28,7 +28,6 @@ function love.load()
     flag_audio = love.audio.newSource("assets/audio/place-flag.mp3", "static")
     win_audio = love.audio.newSource("assets/audio/win.mp3", "static")
 
-    dig_audio:setVolume(1)
     dig_area_audio:setVolume(0.6)
     lose_audio:setVolume(0.4)
 

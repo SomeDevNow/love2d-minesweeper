@@ -3,4 +3,5 @@ function love.conf(t)
     t.window.height =  320
     t.window.title = "minesweeper"
     t.window.resizable = true
+    t.window.fullscreen = false
 end

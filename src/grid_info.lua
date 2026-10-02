@@ -99,12 +99,12 @@ function data.update(grid_x, grid_y, dig_area_audio, dig_audio, lose_audio)
     if data.grid[grid_x][grid_y] == 0 then
         data.clear_blanks(grid_x, grid_y, dig_area_audio)
     elseif data.grid[grid_x][grid_y] ~= 9 then
-        love.audio.stop()
+        love.audio.stop(dig_audio)
         love.audio.play(dig_audio)
         data.grid_revealed[grid_x][grid_y] = true
     elseif data.grid[grid_x][grid_y] == 9 then
         data.game_over = true
-        love.audio.stop()
+        love.audio.stop(lose_audio)
         love.audio.play(lose_audio)
     end
 
@@ -156,7 +156,7 @@ end
 function data.change_flag_state(grid_x, grid_y, flag_audio)
     if not data.grid_revealed[grid_x][grid_y] or data.grid_flagged[grid_x][grid_y] then
         data.grid_flagged[grid_x][grid_y] = (data.grid_flagged[grid_x][grid_y] and {false} or {true})[1]
-        love.audio.stop()
+        love.audio.stop(flag_audio)
         love.audio.play(flag_audio)
     end
 
